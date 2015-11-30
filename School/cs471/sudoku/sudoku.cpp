@@ -32,7 +32,7 @@ void display(board boardToDisplay){
 	
 	for(int row=0; row<9; row++){
 		for(int col=0; col<9; col++){
-			if(boardToDisplay.spaces[row][col].value == 0)
+			if(boardToDisplay.spaces[row][col].value == EMPTY)
 				cout << ". ";
 			else
 				cout << boardToDisplay.spaces[row][col].value << " ";
@@ -66,11 +66,26 @@ board solve(board solveThis){
 		
 		int smallest=100;//variable for smallest size
 		
+		//Set smallest to smallest nonzero size
 		for(int row=0; row<9; row++){
 			for(int col=0; col<9; col++){
-				if (solveThis.spaces[row][col].value < smallest && solveThis.spaces[row][col].value != 0)
+				if(solveThis.spaces[row][col].available.size() < smallest && solveThis.spaces[row][col].available.size() != 0)
+					smallest = solveThis.spaces[row][col].size();
 			}
 		}
+		
+		//If there was a nonzero smallest, try using that value and solve from that
+		if(smallest!=100){
+			for(int row=0; row<9; row++){
+				for(int col=0; col<9; col++){
+					if(solveThis.spaces[row][col].available.size() == smallest){
+						//Try all available numbers for space
+						for(int value=
+					}
+				}
+			}	
+		}
+		
 	}//End if
 		//If done, return the board
 	
@@ -79,6 +94,7 @@ board solve(board solveThis){
 //Main driver
 int main(){
 	board puzzle;
+	board solution;
 	
 	fill(puzzle);
 	display(puzzle);
