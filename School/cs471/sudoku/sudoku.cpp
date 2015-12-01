@@ -44,9 +44,35 @@ void display(board boardToDisplay){
 	return;
 }
 
+//Returns used values in the given row for the given board
+vector<int> rowValues(int row, board& thisBoard){
+}
+
+//Returns used values in a given column for given board
+vector<int> colValues(int col, board& thisBoard){
+}
+
+//Returns used values in a given box for a given board
+vector<int> boxValues(int box, board& thisBoard){
+}
+
 //Updates the available values for each space in the board
 board forwardChecking(board checkThis){
+	space currSpace;
 	
+	for(int row=0; row<9; row++){
+		vector<int> rowVals = rowValues(row, checkThis); //Contains current row's used values
+		
+		for(int col=0; col<9; col++){
+			vector<int> colVals = colValues(col, checkThis); //Contains current col's used values
+			currSpace = checkThis.spaces[row][col];
+			
+			for(int val=0; val < currSpace.avaailable.size(); val++){
+				
+			}
+		}
+	}
+			
 }
 
 //Returns true if board is failed -- unsolvable state
