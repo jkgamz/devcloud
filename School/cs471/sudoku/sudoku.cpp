@@ -204,6 +204,8 @@ vector<int> boxValues(int row, int col, board thisBoard){
 //Updates the available values for each space in the board
 void forwardChecking(board& checkThis){
 	
+	bool rowExist = true;
+	
 	//Cycle through every space on board
 	for(int row=0; row<9; row++){
 		vector<int> rowVals = rowValues(row, checkThis); //Contains current row's used values
@@ -217,11 +219,17 @@ void forwardChecking(board& checkThis){
 				checkThis.spaces[row][col].available.erase(checkThis.spaces[row][col].available.begin());
 			}
 			
+			if(rowVals.size()==0){
+				rowVals.push_back(0);
+				rowExist = false;
+			}
+				
 			//Load row
 			for(int i=0; i<rowVals.size(); i++){
 				checkThis.spaces[row][col].available.push_back(rowVals[i]);
 			}
-				
+
+			
 			//Load col
 			for(int i=0; i<colVals.size(); i++){
 				for(int j=0; j<checkThis.spaces[row][col].available.size(); j++){
@@ -241,6 +249,31 @@ void forwardChecking(board& checkThis){
 						checkThis.spaces[row][col].available.push_back(boxVals[i]);
 				}
 			}
+			
+			if(!rowExist){
+				checkThis.spaces[row][col].available.erase(checkThis.spaces[row][col].available.begin());
+				rowVals.erase(rowVals.begin());
+				rowExist = true;
+			}
+				
+			
+			if(checkThis.spaces[row][col].available.size() == 0)
+				return;
+			
+			vector<int> possibles;
+			for(int i=1; i<=9; i++){
+				possibles.push_back(i);
+			}
+			
+			for(int a=0; a<checkThis.spaces[row][col].available.size(); a++){
+				for(int p=0; p<possibles.size(); p++){
+					if(possibles[p] == checkThis.spaces[row][col].available[a])
+						possibles.erase(possibles.begin() + p);
+				}
+				
+			}
+			
+			checkThis.spaces[row][col].available.swap(possibles);
 		}
 	}	
 }
@@ -280,10 +313,12 @@ bool checkWin(board& checkThis){
 	return true;
 }
 
-
+int recur=0;
 //Sudoku Solver
 board solve(board solveThis){
 	board solution;
+	
+	cout << "called" << endl;
 	
 	//Execute forward checking
 	forwardChecking(solveThis);
@@ -312,6 +347,8 @@ board solve(board solveThis){
 			}
 		}
 		
+		cout << "Smallest: " << smallest << endl;
+		
 		//If there was a nonzero smallest, try using that value and solve from that
 		if(smallest!=100){
 			for(int row=0; row<9; row++){
@@ -319,8 +356,16 @@ board solve(board solveThis){
 					if(solveThis.spaces[row][col].origLOCK == false && solveThis.spaces[row][col].available.size() == smallest){
 						//Try all available numbers for space
 						for(int avail=0; avail<solveThis.spaces[row][col].available.size(); avail++){
+							//cout << "avail " << avail;
+							for(int i=0; i<solveThis.spaces[row][col].available.size(); i++){
+								cout << solveThis.spaces[row][col].available[i] << " ";
+							}
+							cout << endl;
+							cout << solveThis.spaces[row][col].value << endl;
 							solveThis.spaces[row][col].value = solveThis.spaces[row][col].available[avail];
+							cout << solveThis.spaces[row][col].value << endl;
 							solveThis.spaces[row][col].origLOCK == true;
+							cout << " trying " << solveThis.spaces[row][col].value << " at " << row << " " << col << endl;
 							solution = solve(solveThis);
 							if(solution.solved)
 								return solution;
@@ -397,9 +442,11 @@ void freeplay(){
 		puzzle.spaces[(inRow-1)][(inCol-1)].value = inValue;
 		
 		for(int i=0; i<puzzle.spaces[(inRow-1)][(inCol-1)].available.size(); i++){
-			if(puzzle.spaces[(inRow-1)][(inCol-1)].available[i] == inValue){
-				system("read -p 'WARNING: inputted value violates a constraint... [Press ENTER]'");
-			}
+			if(puzzle.spaces[(inRow-1)][(inCol-1)].available[i] == inValue)
+				continue;
+			if(i=(puzzle.spaces[(inRow-1)][(inCol-1)].available.size() - 1))
+				system("read -p 'WARNING: input value violates a constraint [Press ENTER]'");
+				
 		}
 	}
 	
