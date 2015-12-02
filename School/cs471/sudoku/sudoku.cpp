@@ -304,9 +304,10 @@ board solve(board solveThis){
 		//Find smallest nonzero size
 		for(int row=0; row<9; row++){
 			for(int col=0; col<9; col++){
-				if(solveThis.spaces[row][col].available.size() < smallest && solveThis.spaces[row][col].available.size() != 0)
+				if(solveThis.spaces[row][col].available.size() < smallest && solveThis.spaces[row][col].available.size() != 0){
 					if(!solveThis.spaces[row][col].origLOCK){
-					smallest = solveThis.spaces[row][col].available.size();
+						smallest = solveThis.spaces[row][col].available.size();
+					}
 				}
 			}
 		}
@@ -319,10 +320,11 @@ board solve(board solveThis){
 						//Try all available numbers for space
 						for(int avail=0; avail<solveThis.spaces[row][col].available.size(); avail++){
 							solveThis.spaces[row][col].value = solveThis.spaces[row][col].available[avail];
-							solution.spaces[row][col].origLOCK == true;
+							solveThis.spaces[row][col].origLOCK == true;
 							solution = solve(solveThis);
 							if(solution.solved)
 								return solution;
+							solveThis.spaces[row][col].origLOCK == false;
 						}
 					}
 				}
