@@ -399,6 +399,40 @@ board solve(board solveThis){
 	cout << "This was reached :o" << endl;
 }
 
+bool solveNoMCV(board& solveThis, int row, int col){
+	forwardChecking(solveThis);
+	
+	if(row==9)
+		return true;
+	
+	if(solveThis.spaces[row][col].value){
+			
+		if(col == 8){
+			if(solveNoMCV(solveThis, row+1, 0)) return true;
+		}
+		else{
+			if(solveNoMCV(solveThis, row, col+1)) return true;
+		}		
+		return false;
+	}
+	
+	if (solveThis.spaces[row][col].available.size() == 0){
+		return false;
+	}
+	
+	for(int i=0; i<solveThis.spaces[row][col].available.size(); i++){
+		solveThis.spaces[row][col].value = solveThis.spaces[row][col].available[i];
+		
+		if(col == 8){
+			if(solveNoMCV(solveThis, row+1, 0)) return true;
+		}
+		else{
+			if(solveNoMCV(solveThis, row, col+1)) return true;
+		}		
+		solveThis.spaces[row][col].value = 0;
+	}
+		
+}
 
 //Solve Mode
 void solver(){
@@ -419,7 +453,7 @@ void solver(){
 	
 	cout << "Solving..." << endl;
 	
-	puzzle = solve(puzzle);
+	solveNoMCV(puzzle, 0, 0);
 	
 	display(puzzle);
 	
@@ -460,14 +494,11 @@ void freeplay(){
 		
 		puzzle.spaces[(inRow-1)][(inCol-1)].value = inValue;
 	
-		cout << "Domain for " << inRow-1 << " " << inCol-1 << " is: ";	
 		for(int i=0; i<puzzle.spaces[(inRow-1)][(inCol-1)].available.size(); i++){
-			
-			cout << puzzle.spaces[(inRow-1)][(inCol-1)].available[i] << " ";
 			
 			if(puzzle.spaces[(inRow-1)][(inCol-1)].available[i] == inValue)
 				break;
-			if(i=(puzzle.spaces[(inRow-1)][(inCol-1)].available.size() - 1))
+			if(i==(puzzle.spaces[(inRow-1)][(inCol-1)].available.size() - 1))
 				system("read -p 'WARNING: input value violates a constraint [Press ENTER]'");
 				
 		}
@@ -477,7 +508,57 @@ void freeplay(){
 }
 //Assist Mode
 void assist(){
-	cout << "Not implemented..." << endl;
+	board puzzle;
+        int inRow, inCol, inValue;
+
+	system("clear");
+        cout << "//Freeplay Mode//" << endl << endl;
+
+        string response;
+        cout << "Enter puzzle name to open: ";
+        cin >> response;
+
+        puzzle = loadBoard(response.data());
+
+        while(1){
+
+                if(checkWin(puzzle)){
+                        cout << "Puzzle solved!!" << endl;
+                        break;
+                }
+
+                system("clear");
+                display(puzzle);
+
+                forwardChecking(puzzle);
+                cout << "Enter row and column (row, column): ";
+                cin >> inRow >> inCol;
+
+		cout << "Domain for " << inRow << " " << inCol << " is [ ";
+		for(int i=0; i<puzzle.spaces[(inRow-1)][(inCol-1)].available.size(); i++)
+			cout << puzzle.spaces[(inRow-1)][(inCol-1)].available[i] << " ";
+		cout << "]" << endl << "Enter value: ";
+		cin >> inValue;
+		cout << endl;
+
+                if(puzzle.spaces[(inRow-1)][(inCol-1)].origLOCK){
+                        system("read -p 'Original puzzle value; cannot change [Press ENTER]'");
+                        continue;
+                }
+
+                puzzle.spaces[(inRow-1)][(inCol-1)].value = inValue;
+
+                for(int i=0; i<puzzle.spaces[(inRow-1)][(inCol-1)].available.size(); i++){
+
+                        if(puzzle.spaces[(inRow-1)][(inCol-1)].available[i] == inValue)
+                                break;
+                        if(i==(puzzle.spaces[(inRow-1)][(inCol-1)].available.size() - 1))
+                                system("read -p 'WARNING: input value violates a constraint [Press ENTER]'");
+
+                }
+        }
+
+        system("read -p 'Press enter to return to menu...'");
 }
 
 //Main driver

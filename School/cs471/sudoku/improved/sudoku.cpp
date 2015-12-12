@@ -75,13 +75,17 @@ void display(board& boardToDisplay){
 	for(int row=0; row<9; row++){
 		for(int col=0; col<9; col++){
 			if(boardToDisplay.spaces[row][col].value == 0)
-				cout << ". ";
-			else
-				cout << boardToDisplay.spaces[row][col].value << " ";
-			if((col+1)%3 == 0) cout << " ";
+				cout << " .  ";
+			else{
+				if(boardToDisplay.spaces[row][col].origLOCK)
+					cout << "(" << boardToDisplay.spaces[row][col].value << ") ";
+				else
+					cout << " " << boardToDisplay.spaces[row][col].value << "  ";
+			}
+			if((col+1)%3 == 0) cout << "  ";
 		}
-		cout << endl;
-		if ((row+1)%3 == 0) cout << endl;
+		cout << endl << endl;
+		if ((row+1)%3 == 0) cout << endl << endl;
 	}
 	return;
 }
